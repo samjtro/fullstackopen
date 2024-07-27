@@ -1,3 +1,4 @@
+```mermaid
 trad
     participant browser
     participant server
@@ -37,3 +38,4 @@ spa
     activate server
     server->>browser: 201
     deactivate server
+```
