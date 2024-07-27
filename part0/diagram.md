@@ -1,5 +1,5 @@
 ```mermaid
-trad
+sequenceDiagram
     participant browser
     participant server
 
@@ -33,7 +33,10 @@ trad
     server->>browser: .ico file
     deactivate server
 
-spa
+sequenceDiagram
+    participant browser
+    participant server
+    
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
     activate server
     server->>browser: 201
