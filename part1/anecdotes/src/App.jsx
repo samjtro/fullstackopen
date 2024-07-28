@@ -30,13 +30,8 @@ const App = () => {
     const setSelectedRandom = () => {
         setSelected(Math.floor(Math.random() * (anecdotes.length - 1) + 0))
         for(let i in points) {
-            console.log(points[i])
-            if(i!==0) {
-                if(points[i] > points[i-1]) {
-                    setMostVotesIndex(i)
-                } else if(points[i] < points[i-1]) {
-                    setMostVotesIndex(i-1)
-                }
+            if(points[i] > points[mostVotesIndex]) {
+                setMostVotesIndex(i)
             }
         }
     }
