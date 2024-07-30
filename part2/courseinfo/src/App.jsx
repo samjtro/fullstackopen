@@ -5,12 +5,15 @@ const Content = ({part}) => {
     return <p>{part.name} {part.exercises}</p>
 }
 const Course = ({course}) => {
+    var sum = 0
+    course.parts.map((part) => {sum += part.exercises})
     return (
         <>
             <Header title={course.name} />
             {course.parts.map((part) => {
                 return <Content key={part.id} part={part} />
             })}
+            <p>total of {sum} exercises</p>
         </>
     )
 }
