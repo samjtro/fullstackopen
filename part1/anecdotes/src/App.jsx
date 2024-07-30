@@ -42,7 +42,7 @@ const App = () => {
             <p>has {points[selected]} votes</p>
             <Button onClick={vote} text="vote" />
             <Button onClick={setSelectedRandom} text="next" />
-            <h1>anecdote with most votes</h1>
+            <h1>anecdote with the most votes: </h1>
             <p>{anecdotes[mostVotesIndex]}</p>
             <p>has {points[mostVotesIndex]} votes</p>
         </>
