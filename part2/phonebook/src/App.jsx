@@ -4,6 +4,32 @@ const Person = ({person}) => {
   return <p>{person.name}: {person.phone}</p>
 }
 
+const Filter = (params) => {
+  return (
+    <form>
+      <div>
+        filter: <input value={params.value} onChange={params.func} />
+      </div>
+    </form>
+  )
+}
+
+const Add = (params) => {
+  return (
+    <form onSubmit={params.addName}>
+      <div>
+        name: <input value={params.newName} onChange={params.handleNameChange}/>
+      </div>
+      <div>
+        phone #: <input value={params.newPhone} onChange={params.handlePhoneChange}/>
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
 const App = (params) => {
   const [persons, setPersons] = useState(params.persons)
   const [newName, setNewName] = useState('')
@@ -40,23 +66,9 @@ const App = (params) => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          phone #: <input value={newPhone} onChange={handlePhoneChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Add addName={addName} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange} />
       <h2>Numbers</h2>
-      <form>
-        <div>
-          filter: <input value={filterValue} onChange={handleFilterValueChange} />
-        </div>
-      </form>
+      <Filter value={filterValue} func={handleFilterValueChange} />
       {filteredPersons.map((person) => {return <Person key={person.id} person={person} />})}
     </div>
   )
