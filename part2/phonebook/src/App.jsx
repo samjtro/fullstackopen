@@ -8,8 +8,14 @@ const App = (params) => {
   const [persons, setPersons] = useState(params.persons)
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
+  const [filterValue, setFilterValue] = useState('')
+  const [filteredPersons, setFilteredPersons] = useState(params.persons)
   const handleNameChange = (event) => setNewName(event.target.value)
   const handlePhoneChange = (event) => setNewPhone(event.target.value)
+  const handleFilterValueChange = (event) => {
+    setFilterValue(event.target.value)
+    setFilteredPersons(persons.filter((person) => person.name.toLowerCase().includes(event.target.value.toLowerCase())))
+  }
   const addName = (event) => {
     var t = false
     persons.forEach((p) => {
@@ -23,6 +29,9 @@ const App = (params) => {
         phone: newPhone
       }
       setPersons(persons.concat(name))
+      setFilteredPersons(filteredPersons.concat(name).filter((person) => person.name.toLowerCase().includes(filterValue.toLowerCase())))
+      setNewName('')
+      setNewPhone('')
     } else {
       alert(`${newName} already exists...`)
     }
@@ -43,7 +52,12 @@ const App = (params) => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map((person) => {return <Person key={person.id} person={person} />})}
+      <form>
+        <div>
+          filter: <input value={filterValue} onChange={handleFilterValueChange} />
+        </div>
+      </form>
+      {filteredPersons.map((person) => {return <Person key={person.id} person={person} />})}
     </div>
   )
 }
