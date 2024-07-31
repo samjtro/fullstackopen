@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const Person = ({person}) => {
   return <p>{person.name}: {person.phone}</p>
@@ -30,12 +31,30 @@ const Add = (params) => {
   )
 }
 
-const App = (params) => {
-  const [persons, setPersons] = useState(params.persons)
+const Phonebook = (params) => {
+  return (
+    <>
+      <h2>Phonebook</h2>
+      <Filter value={params.filterValue} func={params.handleFilterValueChange} />
+      {params.filteredPersons.map((person) => {return <Person key={person.id} person={person} />})}
+    </>
+  )
+}
+
+const App = () => {
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [filterValue, setFilterValue] = useState('')
-  const [filteredPersons, setFilteredPersons] = useState(params.persons)
+  const [filteredPersons, setFilteredPersons] = useState([])
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+        setFilteredPersons(response.data)
+      })
+  }, [])
   const handleNameChange = (event) => setNewName(event.target.value)
   const handlePhoneChange = (event) => setNewPhone(event.target.value)
   const handleFilterValueChange = (event) => {
@@ -65,11 +84,8 @@ const App = (params) => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
       <Add addName={addName} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange} />
-      <h2>Numbers</h2>
-      <Filter value={filterValue} func={handleFilterValueChange} />
-      {filteredPersons.map((person) => {return <Person key={person.id} person={person} />})}
+      <Phonebook filterValue={filterValue} handleFilterValueChange={handleFilterValueChange} filteredPersons={filteredPersons} />
     </div>
   )
 }
