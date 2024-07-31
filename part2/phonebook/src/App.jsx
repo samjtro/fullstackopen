@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import db from './services/db'
 
 const Person = ({person}) => {
   return <p>{person.name}: {person.phone}</p>
@@ -48,18 +48,18 @@ const App = () => {
   const [filterValue, setFilterValue] = useState('')
   const [filteredPersons, setFilteredPersons] = useState([])
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    db
+      .getAll()
       .then(response => {
-        setPersons(response.data)
-        setFilteredPersons(response.data)
+        setPersons(response)
+        setFilteredPersons(response)
       })
   }, [])
   const handleNameChange = (event) => setNewName(event.target.value)
   const handlePhoneChange = (event) => setNewPhone(event.target.value)
   const handleFilterValueChange = (event) => {
     setFilterValue(event.target.value)
-    setFilteredPersons(persons.filter((person) => person.name.toLowerCase().includes(event.target.value.toLowerCase())))
+    setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(event.target.value.toLowerCase())))
   }
   const addName = (event) => {
     var t = false
@@ -69,12 +69,16 @@ const App = () => {
     if (!t) {
       event.preventDefault()
       const name = {
-        id: persons[persons.length-1].id + 1,
+        id: Number(persons[persons.length-1].id) + 1,
         name: newName,
         phone: newPhone
       }
-      setPersons(persons.concat(name))
-      setFilteredPersons(filteredPersons.concat(name).filter((person) => person.name.toLowerCase().includes(filterValue.toLowerCase())))
+      db
+        .create(name)
+        .then(response => {
+          setPersons(persons.concat(response))
+          setFilteredPersons(filteredPersons.concat(response).filter(person => person.name.toLowerCase().includes(filterValue.toLowerCase())))
+        })
       setNewName('')
       setNewPhone('')
     } else {
