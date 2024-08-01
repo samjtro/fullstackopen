@@ -5,7 +5,7 @@ const Person = ({person, deletePerson}) => {
   return (
     <>
       <p>{person.name}: {person.phone}</p>
-      <button onClick={deletePerson}>delete</button>
+      <button id={person.id} onClick={deletePerson}>delete</button>
     </>
   )
 }
@@ -66,39 +66,59 @@ const App = () => {
     setFilterValue(event.target.value)
     setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(event.target.value.toLowerCase())))
   }
-  const addName = (event) => {
+  const addPerson = (event) => {
     var t = false
-    persons.forEach((p) => {
-      if (p.name === newName) { t = true }
+    var index = 0
+    persons.forEach((p, i) => {
+      if (p.name === newName) { 
+        t = true
+        index = i
+      }
     })
     if (!t) {
       event.preventDefault()
-      const name = {
-        id: Number(persons[persons.length-1].id) + 1,
-        name: newName,
-        phone: newPhone
-      }
       db
-        .create(name)
+        .create({
+          id: String(Number(persons[persons.length-1].id) + 1),
+          name: newName,
+          phone: newPhone
+        })
         .then(response => {
           setPersons(persons.concat(response))
-          setFilteredPersons(filteredPersons.concat(response).filter(person => person.name.toLowerCase().includes(filterValue.toLowerCase())))
+          setFilteredPersons(filteredPersons.concat(response).filter(p => p.name.toLowerCase().includes(filterValue.toLowerCase())))
         })
       setNewName('')
       setNewPhone('')
     } else {
-      alert(`${newName} already exists...`)
+      if (window.confirm(`${newName} already exists. would you like to replace the current number with the new one?`)) {
+        db
+          .update(persons[index].id, {
+            id: persons[index].id,
+            name: persons[index].name,
+            phone: newPhone
+          })
+          .then(response => {
+            console.log(response)
+            setPersons(persons.map(p => p.id !== id ? p : response))
+            setFilteredPersons(filteredPersons.map(p => p.id !== id ? p : response).filter(p => p.name.toLowerCase().includes(filterValue.toLowerCase())))
+          })
+        setNewName('')
+        setNewPhone('')
+      }
     }
   }
-  const deletePerson = ({name}) => {
-    if (window.confirm(`delete`))
-    db
-      .deleteItem()
+  const deletePerson = (event) => {
+    const person = filteredPersons.filter(person => person.id === event.target.id)
+    if (window.confirm(`delete ${person[0].name}`)) {
+      db.deleteItem(event.target.id)
+      setPersons(persons.filter(person => person.id !== event.target.id))
+      setFilteredPersons(filteredPersons.filter(person => person.id !== event.target.id))
+    }
   }
 
   return (
     <div>
-      <Add addName={addName} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange} />
+      <Add addName={addPerson} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange} />
       <Phonebook filterValue={filterValue} handleFilterValueChange={handleFilterValueChange} filteredPersons={filteredPersons} deletePerson={deletePerson}/>
     </div>
   )

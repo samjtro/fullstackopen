@@ -16,24 +16,9 @@
       "id": "3"
     },
     {
-      "name": "Mary Poppendieck",
-      "phone": "39-23-6423122",
-      "id": "4"
-    },
-    {
-      "id": "41",
-      "name": "Sam Troyer",
-      "phone": ""
-    },
-    {
-      "id": "411",
+      "id": "5",
       "name": "Sam",
-      "phone": ""
-    },
-    {
-      "id": 412,
-      "name": "Egghead",
-      "phone": ""
+      "phone": "310"
     }
   ]
 }
