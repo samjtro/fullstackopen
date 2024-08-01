@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react'
 import db from './services/db'
 
-const Person = ({person}) => {
-  return <p>{person.name}: {person.phone}</p>
+const Person = ({person, deletePerson}) => {
+  return (
+    <>
+      <p>{person.name}: {person.phone}</p>
+      <button onClick={deletePerson}>delete</button>
+    </>
+  )
 }
 
 const Filter = (params) => {
@@ -36,7 +41,7 @@ const Phonebook = (params) => {
     <>
       <h2>Phonebook</h2>
       <Filter value={params.filterValue} func={params.handleFilterValueChange} />
-      {params.filteredPersons.map((person) => {return <Person key={person.id} person={person} />})}
+      {params.filteredPersons.map((person) => {return <Person key={person.id} person={person} deletePerson={params.deletePerson} />})}
     </>
   )
 }
@@ -85,11 +90,16 @@ const App = () => {
       alert(`${newName} already exists...`)
     }
   }
+  const deletePerson = ({name}) => {
+    if (window.confirm(`delete`))
+    db
+      .deleteItem()
+  }
 
   return (
     <div>
       <Add addName={addName} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange} />
-      <Phonebook filterValue={filterValue} handleFilterValueChange={handleFilterValueChange} filteredPersons={filteredPersons} />
+      <Phonebook filterValue={filterValue} handleFilterValueChange={handleFilterValueChange} filteredPersons={filteredPersons} deletePerson={deletePerson}/>
     </div>
   )
 }
