@@ -71,7 +71,7 @@ const App = () => {
   const [newPhone, setNewPhone] = useState('')
   const [filterValue, setFilterValue] = useState('')
   const [filteredPersons, setFilteredPersons] = useState([])
-  const [notifMessage, setNotifMessage] = useState('')
+  const [notifMessage, setNotifMessage] = useState(null)
   const [isError, setIsError] = useState(false)
   
   useEffect(() => {
@@ -80,7 +80,6 @@ const App = () => {
       .then(response => {
         setPersons(response)
         setFilteredPersons(response)
-        setIsError(false)
       })
   }, [])
   const handleNameChange = (event) => setNewName(event.target.value)
