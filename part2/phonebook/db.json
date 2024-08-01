@@ -9,16 +9,6 @@
       "name": "Ada Lovelace",
       "phone": "39-44-5323523",
       "id": "2"
-    },
-    {
-      "name": "Dan Abramov",
-      "phone": "12-43-234345",
-      "id": "3"
-    },
-    {
-      "id": "5",
-      "name": "Sam",
-      "phone": "310"
     }
   ]
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import db from './services/db'
+import './index.css'
 
 const Person = ({person, deletePerson}) => {
   return (
@@ -46,18 +47,40 @@ const Phonebook = (params) => {
   )
 }
 
+const Notification = ({message, isError}) => {
+  if (message === null) {
+    return null
+  }
+  if (isError) {
+    return (
+      <div className='notif error'>
+        {message}
+      </div>
+    )
+  }
+  return (
+    <div className='notif alert'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [filterValue, setFilterValue] = useState('')
   const [filteredPersons, setFilteredPersons] = useState([])
+  const [notifMessage, setNotifMessage] = useState('')
+  const [isError, setIsError] = useState(false)
+  
   useEffect(() => {
     db
       .getAll()
       .then(response => {
         setPersons(response)
         setFilteredPersons(response)
+        setIsError(false)
       })
   }, [])
   const handleNameChange = (event) => setNewName(event.target.value)
@@ -86,6 +109,9 @@ const App = () => {
         .then(response => {
           setPersons(persons.concat(response))
           setFilteredPersons(filteredPersons.concat(response).filter(p => p.name.toLowerCase().includes(filterValue.toLowerCase())))
+          setIsError(false)
+          setNotifMessage(`Created ${response.name}: ${response.phone}`)
+          setTimeout(() => {setNotifMessage(null)}, 5000)
         })
       setNewName('')
       setNewPhone('')
@@ -98,10 +124,13 @@ const App = () => {
             phone: newPhone
           })
           .then(response => {
-            console.log(response)
             setPersons(persons.map(p => p.id !== id ? p : response))
             setFilteredPersons(filteredPersons.map(p => p.id !== id ? p : response).filter(p => p.name.toLowerCase().includes(filterValue.toLowerCase())))
           })
+          .catch(error => {
+            setIsError(true)
+            setNotifMessage(`Error: ${error}`)
+            setTimeout(() => {setErrorMessage(null)}, 5000)})
         setNewName('')
         setNewPhone('')
       }
@@ -109,8 +138,14 @@ const App = () => {
   }
   const deletePerson = (event) => {
     const person = filteredPersons.filter(person => person.id === event.target.id)
-    if (window.confirm(`delete ${person[0].name}`)) {
-      db.deleteItem(event.target.id)
+    if (window.confirm(`delete ${person[0].name}?`)) {
+      db
+        .deleteItem(event.target.id)
+        .then(() => {
+          setIsError(false)
+          setNotifMessage(`Deleted ${person[0].name}: ${person[0].phone}`)
+          setTimeout(() => {setNotifMessage(null)}, 5000)
+        })
       setPersons(persons.filter(person => person.id !== event.target.id))
       setFilteredPersons(filteredPersons.filter(person => person.id !== event.target.id))
     }
@@ -118,6 +153,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notifMessage} isError={isError} />
       <Add addName={addPerson} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange} />
       <Phonebook filterValue={filterValue} handleFilterValueChange={handleFilterValueChange} filteredPersons={filteredPersons} deletePerson={deletePerson}/>
     </div>
